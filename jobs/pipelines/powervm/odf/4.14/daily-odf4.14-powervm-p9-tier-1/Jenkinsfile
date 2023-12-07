@@ -20,12 +20,12 @@ pipeline {
         REDHAT_USERNAME = credentials('REDHAT_USERNAME')
         REDHAT_PASSWORD = credentials('REDHAT_PASSWORD')
         PULL_SECRET = credentials('PULL_SECRET')
-        OS_AUTH_URL=credentials('URL_SCNLCICDPOWERVC')
+        OS_AUTH_URL=credentials('URL_SCNL_ONPREM')
 
         //Env constants
         HARDWARE_CHOSE = "P9"
         TERRAFORM_VER = "1.2.0"
-        AVAILABILITY_ZONE = "p9_odf"
+        AVAILABILITY_ZONE = "e980"
         POWERVS = false
         SCRIPT_DEPLOYMENT = false
         WAIT_FOR_DEBUG = "1"
@@ -43,7 +43,7 @@ pipeline {
         ODF_VERSION = "4.14"
         TIER_TEST = "1"
         ENABLE_FIPS = false
-        ENABLE_VAULT = true
+        ENABLE_VAULT = false
        // OCS_REGISTRY_IMAGE="quay.io/rhceph-dev/ocs-registry:latest-stable-4.11.0"
         CONFIG_TYPE = "odf"
 
@@ -60,7 +60,7 @@ pipeline {
         }
         stage('pull artifact') {
             steps {
-                getArtifacts("mirror-openshift-release", "latest-${OCP_RELEASE}-build.txt" )
+                //getArtifacts("mirror-openshift-release", "latest-${OCP_RELEASE}-build.txt" )
                 getArtifacts("powervm/poll-powervc-images", "cicd-rhcos-${OCP_RELEASE}.latest.txt")
                 getArtifacts("powervm/poll-powervc-images", "cicd-rhel-${REDHAT_RELEASE}.latest.txt")
             }
@@ -78,15 +78,15 @@ pipeline {
                         gbToMb()
                         env.OPENSHIFT_IMAGE = ""
                         env.OCP_RELEASE_TAG = ""
-                        if (fileExists("deploy/artifactory/latest-${OCP_RELEASE}-build.txt")) {
-                            env.OPENSHIFT_IMAGE = readFile "deploy/artifactory/latest-${OCP_RELEASE}-build.txt"
-                            env.OPENSHIFT_IMAGE = env.OPENSHIFT_IMAGE.trim()
-                            env.OCP_RELEASE_TAG = env.OPENSHIFT_IMAGE.split(":")[1].trim()
-                        }
-                        else {
-                            echo "latest-${OCP_RELEASE}-build.txt file does not exist. Please check mirror-openshift-release job"
-                            throw err
-                        }
+                       // if (fileExists("deploy/artifactory/latest-${OCP_RELEASE}-build.txt")) {
+                        //    env.OPENSHIFT_IMAGE = readFile "deploy/artifactory/latest-${OCP_RELEASE}-build.txt"
+                        //    env.OPENSHIFT_IMAGE = env.OPENSHIFT_IMAGE.trim()
+                        //    env.OCP_RELEASE_TAG = env.OPENSHIFT_IMAGE.split(":")[1].trim()
+                        //}
+                        //else {
+                        //    echo "latest-${OCP_RELEASE}-build.txt file does not exist. Please check mirror-openshift-release job"
+                         //   throw err
+                        //}
                         if (fileExists("deploy/artifactory/cicd-rhcos-${OCP_RELEASE}.latest.txt")) {
                             env.RHCOS_IMAGE = readFile "deploy/artifactory/cicd-rhcos-${OCP_RELEASE}.latest.txt"
                             env.RHCOS_IMAGE_NAME = env.RHCOS_IMAGE.split()[0].trim()
@@ -105,10 +105,10 @@ pipeline {
                             echo "cicd-rhel-${REDHAT_RELEASE}.latest.txt file does not exist. Please check poll-powervc-images job"
                             throw err
                         }
-                        createTemplate(env.OS_AUTH_URL, env.MASTER_VCPUS , "${MASTER_MEMORY_MB}", env.MASTER_PROCESSORS, env.MASTER_TEMPLATE)
-                        createTemplate(env.OS_AUTH_URL, env.WORKER_VCPUS , "${WORKER_MEMORY_MB}", env.WORKER_PROCESSORS, env.WORKER_TEMPLATE)
-                        createTemplate(env.OS_AUTH_URL, env.BASTION_VCPUS , "${BASTION_MEMORY_MB}", env.BASTION_PROCESSORS, env.BASTION_TEMPLATE)
-                        createTemplate(env.OS_AUTH_URL, env.BOOTSTRAP_VCPUS , "${BOOTSTRAP_MEMORY_MB}", env.BOOTSTRAP_PROCESSORS, env.BOOTSTRAP_TEMPLATE)
+                       // createTemplate(env.OS_AUTH_URL, env.MASTER_VCPUS , "${MASTER_MEMORY_MB}", env.MASTER_PROCESSORS, env.MASTER_TEMPLATE)
+                        //createTemplate(env.OS_AUTH_URL, env.WORKER_VCPUS , "${WORKER_MEMORY_MB}", env.WORKER_PROCESSORS, env.WORKER_TEMPLATE)
+                        //createTemplate(env.OS_AUTH_URL, env.BASTION_VCPUS , "${BASTION_MEMORY_MB}", env.BASTION_PROCESSORS, env.BASTION_TEMPLATE)
+                        //createTemplate(env.OS_AUTH_URL, env.BOOTSTRAP_VCPUS , "${BOOTSTRAP_MEMORY_MB}", env.BOOTSTRAP_PROCESSORS, env.BOOTSTRAP_TEMPLATE)
                     }
                     catch (err)
                     {
@@ -123,11 +123,24 @@ pipeline {
             steps {
                 initializeEnvironment()
                 script {
-                    env.OS_PRIVATE_NETWORK="icp_network2"
-                    env.OS_NETWORK="icp_network2"
-                    env.SCG_ID = "8a5ff38d-0e88-40bd-8bc3-2d1434789461"
-                    env.NETWORK_TYPE = "SRIOV"
-                    env.CNI_NETWORK_PROVIDER = "OpenshiftSDN"
+                    env.OS_PRIVATE_NETWORK="vlan1337"
+                    env.OS_NETWORK="vlan1337"
+                    env.OCP_RELEASE_TAG = ""
+                    env.OPENSHIFT_INSTALL_TARBALL="https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/4.14.1/openshift-install-linux.tar.gz"
+                    env.OPENSHIFT_CLIENT_TARBALL="https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/4.14.1/openshift-client-linux.tar.gz"
+                    env.OPENSHIFT_CLIENT_TARBALL_AMD64="hhttps://mirror.openshift.com/pub/openshift-v4/amd64/clients/ocp/4.14.1/openshift-client-linux.tar.gz"
+                    env.SCG_ID = "993a1363-d689-4796-82fb-77ee34e9fa10"
+                    env.CNI_NETWORK_PROVIDER = "OVNKubernetes"
+                    env.MASTER_TEMPLATE = "odf-master"
+                    env.WORKER_TEMPLATE = "odf-worker"
+                    env.BOOTSTRAP_TEMPLATE = "odf-bastion"
+                    env.BASTION_TEMPLATE = "odf-bastion"
+                    env.OS_TENANT_NAME="cicd"
+                    env.KDUMP_ENABLE="false"
+
+
+
+
                 }
             }
         }

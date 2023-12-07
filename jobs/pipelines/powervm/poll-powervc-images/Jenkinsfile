@@ -2,8 +2,8 @@
 pipeline {
     agent {
         docker {
-            image 'quay.io/powercloud/inbound-agent:4.10-3.3'
-            args '-v /etc/resolv.conf:/etc/resolv.conf'
+            image 'quay.io/sjohn/inbound-agent:4.10-3.3'
+            args '-v /etc/resolv.conf:/etc/resolv.conf.tmp '
             label 'jump-vpc-x86_64'
         }
     }
@@ -13,30 +13,18 @@ pipeline {
         OS_USERNAME = credentials('OS_USERNAME')
         OS_PASSWORD = credentials('OS_PASSWORD')
         PULL_SECRET = credentials('PULL_SECRET')
-        URL_SCNLCICDPOWERVC=credentials('URL_SCNLCICDPOWERVC')
-        URL_SCNLPOWERCLOUD=credentials('URL_SCNLPOWERCLOUD')
+        URL_SCNLONPREM=credentials('URL_SCNLONPREM')
 
-        VIR_CHOSE = "PowerVM"
-        HARDWARE_CHOSE = "P9"
-        NODE_OS = "rhcos-44"
-        BASTION_OS  = "RHEL8.0"
-        TIMEOUT = "0"
-        RELEASE="4.4"
-
-        FUNCTIONAL_TEST_REPO = "icp-sanity-bats"
-        TERRAFORM_VER = "0.11.13"
-        TEST_SUITE = "ppc64le-edge"
         OS = "linux"
         OS_IDENTITY_API_VERSION="3"
-        OS_TENANT_NAME="ibm-default"
+        OS_TENANT_NAME="cicd"
+        OS_PROJECT_NAME="cicd"
         OS_USER_DOMAIN_NAME="default"
         OS_PROJECT_DOMAIN_NAME="Default"
         OS_COMPUTE_API_VERSION="2.37"
         OS_NETWORK_API_VERSION="2.0"
         OS_IMAGE_API_VERSION="2"
         OS_VOLUME_API_VERSION="3"
-        OS_PRIVATE_NETWORK = "icp_network2"
-        OS_NETWORK = "icp_network2"
 	 }
     stages {
         stage('Prepare Terraform Template') {
@@ -47,35 +35,10 @@ pipeline {
                     }
                     try
                     {
-                    env.OS_AUTH_URL = env.URL_SCNLPOWERCLOUD
-                    sh '''
-                    openstack image list --insecure --format value -c Name -c ID > images.scnlpowercloud.all.txt
-                    for i in `cat images.scnlpowercloud.all.txt|awk '{print $2}'`; do line=$(grep $i images.scnlpowercloud.all.txt) ;  create_date=$(openstack image show $i --insecure | grep created_at | awk  'BEGIN{FS="|"}{print $3}' | sed 's/ *$//') ; echo -n  $line" " >> images.scnlpowercloud.all.date.txt; echo $create_date >> images.scnlpowercloud.all.date.txt ;done
-                    cat images.scnlpowercloud.all.date.txt | sort -k3 -r > images.scnlpowercloud.all.date.sorted.txt
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.6\\|cicd-rhcos-46' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.6-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.7\\|cicd-rhcos-47' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.7-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.8\\|cicd-rhcos-48' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.8-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.9\\|cicd-rhcos-49' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.9-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.10\\|cicd-rhcos-410' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.10-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.11\\|cicd-rhcos-411' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.11-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.12\\|cicd-rhcos-412' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.12-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.13\\|cicd-rhcos-413' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.13-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.14\\|cicd-rhcos-414' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.14-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.15\\|cicd-rhcos-415' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.15-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'cicd-rhcos-4\\.16\\|cicd-rhcos-416' | awk '{print $2" "$1}'|head -n 1 > rhcos-4.16-powercloud-latest.txt || true
 
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'rhel8\\.3'  | awk '{print $2" "$1}'|head -n 1 > rhel-8.3-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'rhel8\\.4'  | awk '{print $2" "$1}'|head -n 1 > rhel-8.4-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'rhel8\\.5'  | awk '{print $2" "$1}'|head -n 1 > rhel-8.5-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'rhel8\\.6'  | awk '{print $2" "$1}'|head -n 1 > rhel-8.6-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'rhel9\\.0'  | awk '{print $2" "$1}'|head -n 1 > rhel-9.0-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'rhel9\\.2'  | awk '{print $2" "$1}'|head -n 1 > rhel-9.2-powercloud-latest.txt || true
-                    cat images.scnlpowercloud.all.date.sorted.txt | grep 'rhel9\\.3'  | awk '{print $2" "$1}'|head -n 1 > rhel-9.3-powercloud-latest.txt || true
-
-                    '''
-                    env.OS_AUTH_URL = env.URL_SCNLCICDPOWERVC
+                    env.OS_AUTH_URL = env.URL_SCNLONPREM
                     sh '''
-                    openstack image list --insecure --format value -c Name -c ID > images.scnlcicdcloud.all.txt
+                    openstack image list  --insecure --format value -c Name -c ID > images.scnlcicdcloud.all.txt
                     for i in `cat images.scnlcicdcloud.all.txt|awk '{print $2}'`; do line=$(grep $i images.scnlcicdcloud.all.txt) ;  create_date=$(openstack image show $i --insecure | grep created_at | awk  'BEGIN{FS="|"}{print $3}' | sed 's/ *$//') ; echo -n  $line" " >> images.scnlcicdcloud.all.date.txt; echo $create_date >> images.scnlcicdcloud.all.date.txt ;done
                     cat images.scnlcicdcloud.all.date.txt | sort -k3 -r > images.scnlcicdcloud.all.date.sorted.txt
                     cat images.scnlcicdcloud.all.date.sorted.txt | grep -v ssp | grep 'cicd-rhcos-4\\.6\\|cicd-rhcos-46' | awk '{print $2" "$1}'|head -n 1 > cicd-rhcos-4.6.latest.txt || true

@@ -15,7 +15,7 @@ if [[ -z "${WHAT}" ]]; then
 else
     folders=(${WHAT})
 fi
-
+crudini --set /etc/jenkins_jobs/jenkins_jobs.ini jenkins url ${JENKINS_URI}
 echo "Creating Folders: ${folders[@]}"
 TMP_DIR=$(mktemp -d)
 for folder in "${folders[@]}"
@@ -40,6 +40,7 @@ do
 	unset IFS
 done
 
+echo "jenkins-jobs --user ${JENKINS_USER} --password ${JENKINS_PASSWORD} update ${TMP_DIR}"
 jenkins-jobs --user ${JENKINS_USER} --password ${JENKINS_PASSWORD} update ${TMP_DIR}
 
 if [[ -z "${WHAT}" ]]; then

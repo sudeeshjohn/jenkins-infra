@@ -25,12 +25,15 @@ pipeline {
                     try
                     {
                     sh '''
+
                         cd ${WORKSPACE}/scripts
                         nerdctl login -u ${ARTIFACTORY_USER} -p ${ARTIFACTORY_TOKEN} ${DOCKER_REGISTRY}
-                        wget https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.3/linux/oc.tar.gz -O /tmp/oc.tar.gz
+                        wget --no-check-certificate https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/4.13.39/openshift-client-linux.tar.gz -O /tmp/oc.tar.gz
                         tar zvxf /tmp/oc.tar.gz
                         chmod +x oc
                         export PATH=$PATH:$PWD
+                        #export https_proxy=http://10.230.32.9:3128
+                        #export http_proxy=http://10.230.32.9:3128
                         oc login --token=${CI_OCP_TOKEN_2} --server=https://api.ci.l2s4.p1.openshiftapps.com:6443
                         oc registry login --skip-check
                         ./mirror-images.sh || true

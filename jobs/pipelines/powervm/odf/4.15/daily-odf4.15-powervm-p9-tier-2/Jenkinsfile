@@ -3,7 +3,7 @@
 pipeline {
     agent {
         docker {
-            image 'quay.io/powercloud/inbound-agent:4.10-3.3'
+            image 'quay.io/sjohn/inbound-agent:4.10-3.3'
             args '-v /etc/resolv.conf:/etc/resolv.conf.tmp '
             label 'jump-vpc-x86_64'
         }
@@ -20,16 +20,16 @@ pipeline {
         REDHAT_USERNAME = credentials('REDHAT_USERNAME')
         REDHAT_PASSWORD = credentials('REDHAT_PASSWORD')
         PULL_SECRET = credentials('PULL_SECRET')
-        OS_AUTH_URL=credentials('URL_SCNLCICDPOWERVC')
+        OS_AUTH_URL=credentials('URL_SCNLONPREM')
 
         //Env constants
         HARDWARE_CHOSE = "P9"
         TERRAFORM_VER = "1.2.0"
-        AVAILABILITY_ZONE = "p9_odf"
+        AVAILABILITY_ZONE = "e980"
         POWERVS = false
         SCRIPT_DEPLOYMENT = false
         WAIT_FOR_DEBUG = "1"
-        REDHAT_RELEASE = "9.2"
+        REDHAT_RELEASE = "9.3"
         OCP_RELEASE = "4.15"
 
         //Branch
@@ -78,9 +78,11 @@ pipeline {
                         gbToMb()
                         env.OPENSHIFT_IMAGE = ""
                         env.OCP_RELEASE_TAG = ""
+                        env.OS_PROJECT_NAME="cicd"
+                        env.OS_TENANT_NAME="cicd"
                         if (fileExists("deploy/artifactory/latest-${OCP_RELEASE}-build.txt")) {
                             env.OPENSHIFT_IMAGE = readFile "deploy/artifactory/latest-${OCP_RELEASE}-build.txt"
-                            env.OPENSHIFT_IMAGE = env.OPENSHIFT_IMAGE.trim()
+                            env.OPENSHIFT_IMAGE = "docker-na.artifactory.swg-devops.com/sys-powercloud-docker-local/ocp-ppc64le/release-ppc64le:4.15.12"
                             env.OCP_RELEASE_TAG = env.OPENSHIFT_IMAGE.split(":")[1].trim()
                         }
                         else {
@@ -123,11 +125,11 @@ pipeline {
             steps {
                 initializeEnvironment()
                 script {
-                    env.OS_PRIVATE_NETWORK="icp_network2"
-                    env.OS_NETWORK="icp_network2"
-                    env.SCG_ID = "8a5ff38d-0e88-40bd-8bc3-2d1434789461"
-                    env.NETWORK_TYPE = "SRIOV"
-                    env.CNI_NETWORK_PROVIDER = "OpenshiftSDN"
+                    env.OS_PRIVATE_NETWORK="vlan13374"
+                    env.OS_NETWORK="vlan1337"
+                    //env.NETWORK_TYPE = "SRIOV"
+                    //env.CNI_NETWORK_PROVIDER = "OpenshiftSDN"
+                    env.RERUN_TIER_TEST = "1"
                 }
             }
         }

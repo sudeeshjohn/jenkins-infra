@@ -86,7 +86,9 @@ install_playbook_repo = "__INSTALL_PLAYBOOK_REPO__"
 
 ocp4_extras_playbook_tag = "335a0dc1b329c3f05e3b48409441d9eb1420c27b"
 
-chrony_config_servers = [ {server = "0.centos.pool.ntp.org", options = "iburst"}, {server = "1.centos.pool.ntp.org", options = "iburst"} ]
+chrony_config_servers = [ {server = "10.0.10.4", options = "iburst"}, {server = "10.0.10.5", options = "iburst"} ]
+
+dns_forwarders              = "10.0.10.4; 10.0.10.5"
 
 setup_squid_proxy = "__SETUP_SQUID_PROXY__"
 proxy = {server = "__PROXY_ADDRESS__"}

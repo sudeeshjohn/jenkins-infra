@@ -1,5 +1,8 @@
-FROM jenkins/inbound-agent:4.10-3
+FROM jenkins/inbound-agent:latest
 USER root
+ENV CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+RUN mkdir -p /etc/ssl/certs/
+RUN chmod 755 /etc/ssl/certs/
 RUN apt-get update && apt install curl gnupg2 --yes \
         python3 \
         python3-pip \
@@ -35,4 +38,5 @@ ENV VERSION="0.8.0"
 RUN wget https://github.com/containerd/nerdctl/releases/download/v$VERSION/nerdctl-$VERSION-linux-amd64.tar.gz
 RUN sudo tar zxvf  nerdctl-$VERSION-linux-amd64.tar.gz -C  /usr/local/bin/
 RUN rm -f nerdctl-$VERSION-linux-amd64.tar.gz
+COPY ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 RUN sed -i '2 a ip link set dev eth0 mtu 1420' /usr/local/bin/jenkins-agent

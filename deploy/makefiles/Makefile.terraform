@@ -11,13 +11,13 @@ terraform\:init:
 .PHONY: terraform\:apply
 ## Run terraform apply with -var-file (TERRAFORM_VARS_FILE) in dir (TERRAFORM_DIR)
 terraform\:apply:
-	@$(shell) terraform -chdir=$(TERRAFORM_DIR) apply -parallelism=3 -input=false -auto-approve -lock=false -var-file="$(TERRAFORM_VARS_FILE)" -state="$(TERRAFORM_STATE_FILE)"
+	@$(shell) terraform -chdir=$(TERRAFORM_DIR) apply -parallelism=6 -input=false -auto-approve -lock=false -var-file="$(TERRAFORM_VARS_FILE)" -state="$(TERRAFORM_STATE_FILE)"
 
 .PHONY: terraform\:destroy
 ## Destroy terraform resources
 terraform\:destroy:
 ifeq ($(shell test -d $(TERRAFORM_DIR) && echo -n yes),yes)
-	@$(shell) terraform -chdir=$(TERRAFORM_DIR) destroy -parallelism=3 -input=false -auto-approve -var-file="$(TERRAFORM_VARS_FILE)" -state="$(TERRAFORM_STATE_FILE)"
+	@$(shell) terraform -chdir=$(TERRAFORM_DIR) destroy -parallelism=6 -input=false -auto-approve -var-file="$(TERRAFORM_VARS_FILE)" -state="$(TERRAFORM_STATE_FILE)"
 endif
 
 .PHONY: terraform\:output
