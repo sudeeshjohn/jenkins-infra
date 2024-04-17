@@ -179,7 +179,7 @@ pipeline {
                     env.OS_NETWORK="icp_network2"
                     //env.SCG_ID = "8a5ff38d-0e88-40bd-8bc3-2d1434789461"
                     //env.NETWORK_TYPE = "SRIOV"
-                    env.CNI_NETWORK_PROVIDER = "OpenshiftSDN"
+                    //env.CNI_NETWORK_PROVIDER = "OpenshiftSDN"
                 }
             }
         }
