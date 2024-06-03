@@ -1,7 +1,7 @@
 FROM jenkins/inbound-agent:3107.v665000b_51092-14-jdk17
 USER root
-RUN mkdir -p /etc/ssl/certs/
-RUN chmod 755 /etc/ssl/certs/
+#RUN mkdir -p /etc/ssl/certs/
+#RUN chmod 755 /etc/ssl/certs/
 RUN apt-get update && apt install curl gnupg2 --yes \
         python3 \
         python3-pip \
@@ -42,7 +42,11 @@ ENV VERSION="1.7.6"
 RUN wget https://github.com/containerd/nerdctl/releases/download/v$VERSION/nerdctl-$VERSION-linux-amd64.tar.gz
 RUN sudo tar zxvf  nerdctl-$VERSION-linux-amd64.tar.gz -C  /usr/local/bin/
 RUN rm -f nerdctl-$VERSION-linux-amd64.tar.gz
-COPY pvm.crt /etc/ssl/certs/pvm.crt
-RUN /usr/sbin/update-ca-certificates
+ENV VERSION="v1.30.0"
+RUN wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
+RUN sudo tar zxvf  crictl-$VERSION-linux-amd64.tar.gz -C  /usr/local/bin/
+RUN rm -f crictl-$VERSION-linux-amd64.tar.gz
+#COPY pvm.crt /etc/ssl/certs/pvm.crt
+#RUN /usr/sbin/update-ca-certificates
 RUN echo "check_certificate = off" >> ~/.wgetrc
 RUN sed -i '2 a ip link set dev eth0 mtu 1420' /usr/local/bin/jenkins-agent
