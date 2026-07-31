@@ -1,0 +1,38 @@
+pipeline {
+    agent {
+        docker {
+            image 'registry.access.redhat.com/ubi9/ubi-init'
+            label 'odh-jenkins-agent-p10-1'
+            args '''
+                -v /run/podman/podman.sock:/run/podman/podman.sock
+                -u root
+            '''
+        }
+    }
+
+    stages {
+
+        stage('Install Podman Client') {
+            steps {
+                sh '''
+                    dnf install -y podman
+                '''
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh '''
+                    export CONTAINER_HOST=unix:///run/podman/podman.sock
+
+cat > Dockerfile <<'EOF'
+FROM registry.access.redhat.com/ubi9/ubi
+RUN echo "Built by Podman"
+EOF
+
+                    podman build -t test-image:${BUILD_NUMBER} .
+                '''
+            }
+        }
+    }
+}

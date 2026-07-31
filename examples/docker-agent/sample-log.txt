@@ -1,0 +1,227 @@
+Started by user sudeeshjohn@in.ibm.com
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on jenkins-agent-p10-1 in /var/jenkins/workspace/test/test-1
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker inspect -f . registry.access.redhat.com/ubi9/ubi-init
+.
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] withDockerContainer
+jenkins-agent-p10-1 does not seem to be running inside a container
+$ docker run -t -d -u 0:0 -v /run/podman/podman.sock:/run/podman/podman.sock -u root -w /var/jenkins/workspace/test/test-1 -v /var/jenkins/workspace/test/test-1:/var/jenkins/workspace/test/test-1:rw,z -v /var/jenkins/workspace/test/test-1@tmp:/var/jenkins/workspace/test/test-1@tmp:rw,z -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** registry.access.redhat.com/ubi9/ubi-init cat
+$ docker top 7237ebc459b7b014b4e3123f571f9c409cdd41f5d577e423a9041be126bfa8fa -eo pid,comm
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Install Podman Client)
+[Pipeline] sh
++ dnf install -y podman
+Updating Subscription Management repositories.
+subscription-manager is operating in container mode.
+Red Hat Enterprise Linux 9 for Power, little en  37 MB/s |  91 MB     00:02    
+Red Hat Enterprise Linux 9 for Power, little en  53 MB/s |  78 MB     00:01    
+Red Hat Universal Base Image 9 (RPMs) - BaseOS  1.9 MB/s | 440 kB     00:00    
+Red Hat Universal Base Image 9 (RPMs) - AppStre 9.2 MB/s | 2.4 MB     00:00    
+Red Hat Universal Base Image 9 (RPMs) - CodeRea 1.3 MB/s | 277 kB     00:00    
+Dependencies resolved.
+=======================================================================================================
+ Package                  Arch     Version                     Repository                          Size
+=======================================================================================================
+Installing:
+ podman                   ppc64le  6:5.8.2-5.el9_8             rhel-9-for-ppc64le-appstream-rpms   15 M
+Installing dependencies:
+ aardvark-dns             ppc64le  2:1.17.1-1.el9_8            rhel-9-for-ppc64le-appstream-rpms  1.0 M
+ conmon                   ppc64le  3:2.2.1-1.el9               rhel-9-for-ppc64le-appstream-rpms   54 k
+ containers-common        ppc64le  5:5.8-1.el9                 rhel-9-for-ppc64le-appstream-rpms  166 k
+ crun                     ppc64le  1.27-1.el9_8                rhel-9-for-ppc64le-appstream-rpms  286 k
+ fuse-common              ppc64le  3.10.2-9.el9                rhel-9-for-ppc64le-baseos-rpms     8.5 k
+ fuse-overlayfs           ppc64le  1.16-1.el9_7                rhel-9-for-ppc64le-appstream-rpms   68 k
+ fuse3                    ppc64le  3.10.2-9.el9                rhel-9-for-ppc64le-appstream-rpms   60 k
+ fuse3-libs               ppc64le  3.10.2-9.el9                rhel-9-for-ppc64le-appstream-rpms   99 k
+ iptables-libs            ppc64le  1.8.10-11.el9_5             rhel-9-for-ppc64le-baseos-rpms     484 k
+ iptables-nft             ppc64le  1.8.10-11.el9_5             rhel-9-for-ppc64le-baseos-rpms     230 k
+ jansson                  ppc64le  2.14-1.el9                  rhel-9-for-ppc64le-baseos-rpms      53 k
+ kmod                     ppc64le  28-11.el9                   rhel-9-for-ppc64le-baseos-rpms     137 k
+ libnet                   ppc64le  1.2-7.el9                   rhel-9-for-ppc64le-appstream-rpms   67 k
+ libnetfilter_conntrack   ppc64le  1.0.9-1.el9                 rhel-9-for-ppc64le-baseos-rpms      65 k
+ libnfnetlink             ppc64le  1.0.1-23.el9_5              rhel-9-for-ppc64le-baseos-rpms      32 k
+ libnftnl                 ppc64le  1.2.6-4.el9_4               rhel-9-for-ppc64le-baseos-rpms      95 k
+ libnl3                   ppc64le  3.11.0-1.el9                rhel-9-for-ppc64le-baseos-rpms     385 k
+ libslirp                 ppc64le  4.4.0-8.el9                 rhel-9-for-ppc64le-appstream-rpms   75 k
+ netavark                 ppc64le  2:1.17.2-1.el9              rhel-9-for-ppc64le-appstream-rpms  3.4 M
+ nftables                 ppc64le  1:1.0.9-7.el9_8             rhel-9-for-ppc64le-baseos-rpms     454 k
+ passt                    ppc64le  0^20251210.gd04c480-5.el9_8 rhel-9-for-ppc64le-appstream-rpms  196 k
+ protobuf-c               ppc64le  1.3.3-13.el9                rhel-9-for-ppc64le-baseos-rpms      40 k
+ shadow-utils-subid       ppc64le  2:4.9-16.el9                rhel-9-for-ppc64le-baseos-rpms      95 k
+ slirp4netns              ppc64le  1.3.3-1.el9                 rhel-9-for-ppc64le-appstream-rpms   50 k
+ yajl                     ppc64le  2.1.0-25.el9                rhel-9-for-ppc64le-appstream-rpms   44 k
+Installing weak dependencies:
+ criu                     ppc64le  3.19-3.el9                  rhel-9-for-ppc64le-appstream-rpms  589 k
+ criu-libs                ppc64le  3.19-3.el9                  rhel-9-for-ppc64le-appstream-rpms   33 k
+
+Transaction Summary
+=======================================================================================================
+Install  28 Packages
+
+Total download size: 23 M
+Installed size: 88 M
+Downloading Packages:
+(1/28): fuse3-libs-3.10.2-9.el9.ppc64le.rpm     568 kB/s |  99 kB     00:00    
+(2/28): libnet-1.2-7.el9.ppc64le.rpm            341 kB/s |  67 kB     00:00    
+(3/28): fuse3-3.10.2-9.el9.ppc64le.rpm          266 kB/s |  60 kB     00:00    
+(4/28): libslirp-4.4.0-8.el9.ppc64le.rpm        684 kB/s |  75 kB     00:00    
+(5/28): yajl-2.1.0-25.el9.ppc64le.rpm           302 kB/s |  44 kB     00:00    
+(6/28): criu-3.19-3.el9.ppc64le.rpm             3.4 MB/s | 589 kB     00:00    
+(7/28): criu-libs-3.19-3.el9.ppc64le.rpm        261 kB/s |  33 kB     00:00    
+(8/28): slirp4netns-1.3.3-1.el9.ppc64le.rpm     410 kB/s |  50 kB     00:00    
+(9/28): fuse-overlayfs-1.16-1.el9_7.ppc64le.rpm 442 kB/s |  68 kB     00:00    
+(10/28): conmon-2.2.1-1.el9.ppc64le.rpm         359 kB/s |  54 kB     00:00    
+(11/28): containers-common-5.8-1.el9.ppc64le.rp 1.3 MB/s | 166 kB     00:00    
+(12/28): passt-0^20251210.gd04c480-5.el9_8.ppc6 1.9 MB/s | 196 kB     00:00    
+(13/28): crun-1.27-1.el9_8.ppc64le.rpm          2.1 MB/s | 286 kB     00:00    
+(14/28): netavark-1.17.2-1.el9.ppc64le.rpm       21 MB/s | 3.4 MB     00:00    
+(15/28): jansson-2.14-1.el9.ppc64le.rpm         470 kB/s |  53 kB     00:00    
+(16/28): aardvark-dns-1.17.1-1.el9_8.ppc64le.rp 6.4 MB/s | 1.0 MB     00:00    
+(17/28): libnetfilter_conntrack-1.0.9-1.el9.ppc 713 kB/s |  65 kB     00:00    
+(18/28): protobuf-c-1.3.3-13.el9.ppc64le.rpm    396 kB/s |  40 kB     00:00    
+(19/28): podman-5.8.2-5.el9_8.ppc64le.rpm        41 MB/s |  15 MB     00:00    
+(20/28): fuse-common-3.10.2-9.el9.ppc64le.rpm    82 kB/s | 8.5 kB     00:00    
+(21/28): libnftnl-1.2.6-4.el9_4.ppc64le.rpm     678 kB/s |  95 kB     00:00    
+(22/28): libnfnetlink-1.0.1-23.el9_5.ppc64le.rp 367 kB/s |  32 kB     00:00    
+(23/28): iptables-nft-1.8.10-11.el9_5.ppc64le.r 1.5 MB/s | 230 kB     00:00    
+(24/28): iptables-libs-1.8.10-11.el9_5.ppc64le. 3.0 MB/s | 484 kB     00:00    
+(25/28): libnl3-3.11.0-1.el9.ppc64le.rpm        3.4 MB/s | 385 kB     00:00    
+(26/28): kmod-28-11.el9.ppc64le.rpm             1.5 MB/s | 137 kB     00:00    
+(27/28): shadow-utils-subid-4.9-16.el9.ppc64le. 1.1 MB/s |  95 kB     00:00    
+(28/28): nftables-1.0.9-7.el9_8.ppc64le.rpm     4.5 MB/s | 454 kB     00:00    
+--------------------------------------------------------------------------------
+Total                                            17 MB/s |  23 MB     00:01     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : libnftnl-1.2.6-4.el9_4.ppc64le                        1/28 
+  Installing       : protobuf-c-1.3.3-13.el9.ppc64le                       2/28 
+  Installing       : fuse3-libs-3.10.2-9.el9.ppc64le                       3/28 
+  Installing       : shadow-utils-subid-2:4.9-16.el9.ppc64le               4/28 
+  Installing       : kmod-28-11.el9.ppc64le                                5/28 
+  Installing       : libnl3-3.11.0-1.el9.ppc64le                           6/28 
+  Installing       : libnfnetlink-1.0.1-23.el9_5.ppc64le                   7/28 
+  Installing       : libnetfilter_conntrack-1.0.9-1.el9.ppc64le            8/28 
+  Installing       : iptables-libs-1.8.10-11.el9_5.ppc64le                 9/28 
+  Installing       : iptables-nft-1.8.10-11.el9_5.ppc64le                 10/28 
+  Running scriptlet: iptables-nft-1.8.10-11.el9_5.ppc64le                 10/28 
+  Installing       : fuse-common-3.10.2-9.el9.ppc64le                     11/28 
+  Installing       : fuse3-3.10.2-9.el9.ppc64le                           12/28 
+  Installing       : fuse-overlayfs-1.16-1.el9_7.ppc64le                  13/28 
+  Running scriptlet: fuse-overlayfs-1.16-1.el9_7.ppc64le                  13/28 
+  Installing       : jansson-2.14-1.el9.ppc64le                           14/28 
+  Installing       : nftables-1:1.0.9-7.el9_8.ppc64le                     15/28 
+  Running scriptlet: nftables-1:1.0.9-7.el9_8.ppc64le                     15/28 
+  Installing       : aardvark-dns-2:1.17.1-1.el9_8.ppc64le                16/28 
+  Installing       : netavark-2:1.17.2-1.el9.ppc64le                      17/28 
+  Installing       : passt-0^20251210.gd04c480-5.el9_8.ppc64le            18/28 
+  Installing       : conmon-3:2.2.1-1.el9.ppc64le                         19/28 
+  Installing       : yajl-2.1.0-25.el9.ppc64le                            20/28 
+  Installing       : libslirp-4.4.0-8.el9.ppc64le                         21/28 
+  Installing       : slirp4netns-1.3.3-1.el9.ppc64le                      22/28 
+  Installing       : libnet-1.2-7.el9.ppc64le                             23/28 
+  Installing       : criu-3.19-3.el9.ppc64le                              24/28 
+  Installing       : criu-libs-3.19-3.el9.ppc64le                         25/28 
+  Installing       : crun-1.27-1.el9_8.ppc64le                            26/28 
+  Installing       : containers-common-5:5.8-1.el9.ppc64le                27/28 
+  Installing       : podman-6:5.8.2-5.el9_8.ppc64le                       28/28 
+  Running scriptlet: podman-6:5.8.2-5.el9_8.ppc64le                       28/28 
+  Verifying        : fuse3-3.10.2-9.el9.ppc64le                            1/28 
+  Verifying        : fuse3-libs-3.10.2-9.el9.ppc64le                       2/28 
+  Verifying        : libnet-1.2-7.el9.ppc64le                              3/28 
+  Verifying        : libslirp-4.4.0-8.el9.ppc64le                          4/28 
+  Verifying        : yajl-2.1.0-25.el9.ppc64le                             5/28 
+  Verifying        : criu-3.19-3.el9.ppc64le                               6/28 
+  Verifying        : criu-libs-3.19-3.el9.ppc64le                          7/28 
+  Verifying        : slirp4netns-1.3.3-1.el9.ppc64le                       8/28 
+  Verifying        : fuse-overlayfs-1.16-1.el9_7.ppc64le                   9/28 
+  Verifying        : conmon-3:2.2.1-1.el9.ppc64le                         10/28 
+  Verifying        : containers-common-5:5.8-1.el9.ppc64le                11/28 
+  Verifying        : netavark-2:1.17.2-1.el9.ppc64le                      12/28 
+  Verifying        : crun-1.27-1.el9_8.ppc64le                            13/28 
+  Verifying        : passt-0^20251210.gd04c480-5.el9_8.ppc64le            14/28 
+  Verifying        : aardvark-dns-2:1.17.1-1.el9_8.ppc64le                15/28 
+  Verifying        : podman-6:5.8.2-5.el9_8.ppc64le                       16/28 
+  Verifying        : jansson-2.14-1.el9.ppc64le                           17/28 
+  Verifying        : libnetfilter_conntrack-1.0.9-1.el9.ppc64le           18/28 
+  Verifying        : protobuf-c-1.3.3-13.el9.ppc64le                      19/28 
+  Verifying        : libnftnl-1.2.6-4.el9_4.ppc64le                       20/28 
+  Verifying        : fuse-common-3.10.2-9.el9.ppc64le                     21/28 
+  Verifying        : iptables-libs-1.8.10-11.el9_5.ppc64le                22/28 
+  Verifying        : iptables-nft-1.8.10-11.el9_5.ppc64le                 23/28 
+  Verifying        : libnfnetlink-1.0.1-23.el9_5.ppc64le                  24/28 
+  Verifying        : libnl3-3.11.0-1.el9.ppc64le                          25/28 
+  Verifying        : kmod-28-11.el9.ppc64le                               26/28 
+  Verifying        : shadow-utils-subid-2:4.9-16.el9.ppc64le              27/28 
+  Verifying        : nftables-1:1.0.9-7.el9_8.ppc64le                     28/28 
+Installed products updated.
+
+Installed:
+  aardvark-dns-2:1.17.1-1.el9_8.ppc64le                                         
+  conmon-3:2.2.1-1.el9.ppc64le                                                  
+  containers-common-5:5.8-1.el9.ppc64le                                         
+  criu-3.19-3.el9.ppc64le                                                       
+  criu-libs-3.19-3.el9.ppc64le                                                  
+  crun-1.27-1.el9_8.ppc64le                                                     
+  fuse-common-3.10.2-9.el9.ppc64le                                              
+  fuse-overlayfs-1.16-1.el9_7.ppc64le                                           
+  fuse3-3.10.2-9.el9.ppc64le                                                    
+  fuse3-libs-3.10.2-9.el9.ppc64le                                               
+  iptables-libs-1.8.10-11.el9_5.ppc64le                                         
+  iptables-nft-1.8.10-11.el9_5.ppc64le                                          
+  jansson-2.14-1.el9.ppc64le                                                    
+  kmod-28-11.el9.ppc64le                                                        
+  libnet-1.2-7.el9.ppc64le                                                      
+  libnetfilter_conntrack-1.0.9-1.el9.ppc64le                                    
+  libnfnetlink-1.0.1-23.el9_5.ppc64le                                           
+  libnftnl-1.2.6-4.el9_4.ppc64le                                                
+  libnl3-3.11.0-1.el9.ppc64le                                                   
+  libslirp-4.4.0-8.el9.ppc64le                                                  
+  netavark-2:1.17.2-1.el9.ppc64le                                               
+  nftables-1:1.0.9-7.el9_8.ppc64le                                              
+  passt-0^20251210.gd04c480-5.el9_8.ppc64le                                     
+  podman-6:5.8.2-5.el9_8.ppc64le                                                
+  protobuf-c-1.3.3-13.el9.ppc64le                                               
+  shadow-utils-subid-2:4.9-16.el9.ppc64le                                       
+  slirp4netns-1.3.3-1.el9.ppc64le                                               
+  yajl-2.1.0-25.el9.ppc64le                                                     
+
+Complete!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] sh
++ export CONTAINER_HOST=unix:///run/podman/podman.sock
++ CONTAINER_HOST=unix:///run/podman/podman.sock
++ cat
++ podman build -t test-image:9 .
+STEP 1/2: FROM registry.access.redhat.com/ubi9/ubi
+STEP 2/2: RUN echo "Built by Podman"
+Built by Podman
+COMMIT test-image:9
+--> 5f1661b27ff8
+Successfully tagged localhost/test-image:9
+5f1661b27ff8da4349c240426d5acd5ff2fc80ae7ae4650fbdfc55334f31f1f8
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+$ docker stop --time=1 7237ebc459b7b014b4e3123f571f9c409cdd41f5d577e423a9041be126bfa8fa
+$ docker rm -f --volumes 7237ebc459b7b014b4e3123f571f9c409cdd41f5d577e423a9041be126bfa8fa
+[Pipeline] // withDockerContainer
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
